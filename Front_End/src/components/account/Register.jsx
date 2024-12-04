@@ -7,18 +7,21 @@ import { useState } from "react";
 const Register = () => {
   
   const [error,setError] = useState('')
+  const [successfulMsg,setSuccessfulMsg] = useState('')
   const [registerDetails,setRegisterDetails] = useState({
     name:"",
     username:"",
     password:""
   })
 
+  const navigate = useNavigate()
+
   const handleChange = (e) => {
     const {name,value} = e.target
     setRegisterDetails((prevState) => ({...prevState,[name]:value}))
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault()
     console.log(registerDetails);
 
@@ -28,6 +31,26 @@ const Register = () => {
     }
 
     setError('')
+
+    try {
+      const response = await fetch("http://localhost:5000/sign-up",{
+        method: "POST",
+        headers: {'Content-Type' : 'application/json'},
+        body:JSON.stringify(registerDetails)
+      })
+      if(response.ok){
+        setSuccessfulMsg("Registered Successfully")
+        setTimeout (() => {
+          navigate("/")
+        },2000)
+      }
+      const datas = await response.json()
+      if(datas.message == "Username already exists"){
+        setError(datas.message)
+      }
+    } catch (error) {
+      console.error("Error while resitering",error)
+    }
 
     setRegisterDetails({
       name:"",
@@ -87,6 +110,17 @@ const Register = () => {
             }}
             >
             {error}
+            </Typography>
+          )}
+
+          {successfulMsg && (
+            <Typography
+            variant="body"
+            sx={{
+              color:"green"
+            }}
+            >
+            {successfulMsg}
             </Typography>
           )}
 
