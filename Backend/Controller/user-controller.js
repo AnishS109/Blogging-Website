@@ -1,7 +1,7 @@
 import UserSchema from "../Model/UserSchema.js"
 
 
-export const SignUpUser = async(req,res) => {
+const SignUpUser = async(req,res) => {
 
   const {name,username,password} = req.body
 

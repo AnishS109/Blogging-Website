@@ -2,61 +2,100 @@ import { Box, Button, TextField, Typography } from "@mui/material";
 import Logo from "../../assets/Logo.png";
 import BackgroundLogin from "../../assets/BackgroundLogin.jpeg";
 import { NavLink, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useReducer, useState } from "react";
 
 const Register = () => {
   
-  const [error,setError] = useState('')
-  const [successfulMsg,setSuccessfulMsg] = useState('')
-  const [registerDetails,setRegisterDetails] = useState({
-    name:"",
-    username:"",
-    password:""
-  })
+  // const [error,setError] = useState('')
+  // const [successfulMsg,setSuccessfulMsg] = useState('')
+  // const [registerDetails,setRegisterDetails] = useState({
+  //   name:"",
+  //   username:"",
+  //   password:""
+  // })
+
+  const initialState = {
+    error:"",
+    successfulMsg:"",
+    registerDetails:{
+      name:"",
+      username:"",
+      password:""
+    }
+  }
+
+  const reducer = (state,action) => {
+    if(action.type === "SET_FIELD"){
+      return {...state,
+        registerDetails:{
+          ...state.registerDetails,
+          [action.field]:action.value
+        }}
+    }
+    if(action.type === "SET_ERROR"){
+      return {
+        ...state,
+        error:action.payload,
+      }
+    }
+    if (action.type === "SET_SUCCESS"){
+      return {
+        ...state,
+        successfulMsg:action.payload,
+      }
+    }
+    if (action.type === "RESET_FORM"){
+      return {
+        ...state,
+        registerDetails: { name: "", username: "", password: "" },
+        error: "",
+        successfulMsg: "",
+      }
+    }
+    return state
+  }
+
+  const [state,dispatcState] = useReducer(reducer,initialState)
 
   const navigate = useNavigate()
 
   const handleChange = (e) => {
     const {name,value} = e.target
-    setRegisterDetails((prevState) => ({...prevState,[name]:value}))
+    dispatcState({type:"SET_FIELD",field:name,value})
   }
 
   const handleSubmit = async(e) => {
     e.preventDefault()
-    console.log(registerDetails);
+    console.log(state.registerDetails);
 
-    if(!registerDetails.name || !registerDetails.username || !registerDetails.password){
-      setError("All fields are required!")
+    if(!state.registerDetails.name || !state.registerDetails.username || !state.registerDetails.password){
+      dispatcState({type:"SET_ERROR",payload:"All fields are required"})
       return;
     }
 
-    setError('')
+    dispatcState({type:"SET_ERROR",payload:""})
 
     try {
       const response = await fetch("http://localhost:5000/sign-up",{
         method: "POST",
         headers: {'Content-Type' : 'application/json'},
-        body:JSON.stringify(registerDetails)
+        body:JSON.stringify(state.registerDetails)
       })
       if(response.ok){
-        setSuccessfulMsg("Registered Successfully")
+        dispatcState({type:"SET_SUCCESS",payload:"Registered Successfully"})
         setTimeout (() => {
           navigate("/")
         },2000)
       }
       const datas = await response.json()
       if(datas.message == "Username already exists"){
-        setError(datas.message)
+        dispatcState({type:"SET_ERROR",payload:datas.message})
       }
     } catch (error) {
       console.error("Error while resitering",error)
     }
 
-    setRegisterDetails({
-      name:"",
-      username:"",
-      password:""
-    })
+    dispatcState({type:"RESET_FORM"})
   }
 
   return (
@@ -102,25 +141,25 @@ const Register = () => {
             />
           </Box>
 
-          {error && (
+          {state.error && (
             <Typography
             variant="body"
             sx={{
               color:"red"
             }}
             >
-            {error}
+            {state.error}
             </Typography>
           )}
 
-          {successfulMsg && (
+          {state.successfulMsg && (
             <Typography
             variant="body"
             sx={{
               color:"green"
             }}
             >
-            {successfulMsg}
+            {state.successfulMsg}
             </Typography>
           )}
 
@@ -153,7 +192,7 @@ const Register = () => {
             fullWidth
             required
             name="name"
-            value={registerDetails.name}
+            value={state.registerDetails.name}
             onChange={handleChange}
             sx={{
               marginBottom: "20px",
@@ -169,7 +208,7 @@ const Register = () => {
             fullWidth
             required
             name="username"
-            value={registerDetails.username}
+            value={state.registerDetails.username}
             onChange={handleChange}
             sx={{
               marginBottom: "20px",
@@ -185,7 +224,7 @@ const Register = () => {
             type="password"
             name="password"
             required
-            value={registerDetails.password}
+            value={state.registerDetails.password}
             onChange={handleChange}
             fullWidth
             sx={{

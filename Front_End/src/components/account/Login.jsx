@@ -1,7 +1,7 @@
 import { Box, Button, TextField, Typography } from "@mui/material";
 import Logo from "../../assets/Logo.png";
 import BackgroundLogin from "../../assets/BackgroundLogin.jpeg";
-import { useState } from "react";
+import { useReducer, useState } from "react";
 import { NavLink } from "react-router-dom";
 
 const Login = () => {
@@ -12,26 +12,56 @@ const Login = () => {
     password:""
   })
 
+  const initialState = {
+    error:"",
+    loginDetails:{
+      username:"",
+      password:"",
+    }
+  }
+
+  const reducer = (state,action) => {
+    if(action.type === "SET_FORM"){
+      return {
+        ...state,
+        loginDetails:{
+          ...state.loginDetails,
+          [action.field]:action.value
+        }
+      }
+    }
+    if(action.type === "RESET_FORM"){
+      return {
+        ...state,
+        loginDetails:{username:"",password:""},
+        error:""
+      }
+    }
+    if(action.type === "SET_ERROR"){
+      return {
+        ...state,
+        error:action.payload
+      }
+    }
+  }
+
+  const [state,dispatchState] = useReducer(reducer,initialState)
+
   const handleChange = (e) => {
     const {name,value} = e.target
-    SetLoginDetails((prevState) => ({...prevState,[name]:value}))
+    dispatchState({type:"SET_FORM",field:name,value})
   } 
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    console.log(loginDetails);
+    console.log(state.loginDetails);
 
-    if(!loginDetails.username || !loginDetails.password){
-      setError('All fields are required!')
+    if(!state.loginDetails.username || !state.loginDetails.password){
+      dispatchState({type:"SET_ERROR",payload:"All fields are required!"})
       return;
     }
 
-    setError('')
-
-    SetLoginDetails({
-      username:"",
-      password:""
-    })
+    dispatchState({type:"RESET_FORM"})
   }
 
   return (
@@ -77,14 +107,14 @@ const Login = () => {
             />
           </Box>
 
-          {error && (
+          {state.error && (
             <Typography
             variant="body"
             sx={{
               color:"red"
             }}
             >
-            {error}
+            {state.error}
             </Typography>
           )}
 
@@ -116,7 +146,7 @@ const Login = () => {
             variant="outlined"
             fullWidth
             name="username"
-            value={loginDetails.username}
+            value={state.loginDetails.username}
             onChange={handleChange}
             sx={{
               marginBottom: "20px",
@@ -132,7 +162,7 @@ const Login = () => {
             type="password"
             name="password"
             fullWidth
-            value={loginDetails.password}
+            value={state.loginDetails.password}
             onChange={handleChange}
             sx={{
               marginBottom: "30px",
