@@ -2,18 +2,13 @@ import { Box, Button, TextField, Typography } from "@mui/material";
 import Logo from "../../assets/Logo.png";
 import BackgroundLogin from "../../assets/BackgroundLogin.jpeg";
 import { useReducer, useState } from "react";
-import { NavLink } from "react-router-dom";
+import { data, NavLink } from "react-router-dom";
 
 const Login = () => {
-  
-  const [error,setError] = useState('')
-  const [loginDetails,SetLoginDetails] = useState({
-    username:"",
-    password:""
-  })
 
   const initialState = {
     error:"",
+    successMsg:"",
     loginDetails:{
       username:"",
       password:"",
@@ -52,16 +47,41 @@ const Login = () => {
     dispatchState({type:"SET_FORM",field:name,value})
   } 
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault()
-    console.log(state.loginDetails);
+    // console.log(state.loginDetails);
 
     if(!state.loginDetails.username || !state.loginDetails.password){
       dispatchState({type:"SET_ERROR",payload:"All fields are required!"})
       return;
     }
+    
+    dispatchState({type:"SET_ERROR" ,payload : ""})
 
-    dispatchState({type:"RESET_FORM"})
+    try {
+
+      const response = await fetch("http://localhost:5000/login", {
+        method: "POST",
+        headers:{ "Content-Type" : "application/json" },
+        body: JSON.stringify(state.loginDetails)
+      })
+
+      const data = await response.json()
+
+      if(response.ok){
+        console.log(data)
+        dispatchState({type:"RESET_FORM"})
+        dispatchState({type:"SET_ERROR" ,payload : ""})
+      }
+      else{
+        const errorData = await response.json();
+        dispatchState({type:"SET_ERROR", payload:errorData.message})
+      }
+      
+    } catch (error) {
+      console.error("SOMETHING WENT WRONG" , error)
+      console.log(data)
+    }
   }
 
   return (

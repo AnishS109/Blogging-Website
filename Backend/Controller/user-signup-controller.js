@@ -1,7 +1,11 @@
 import UserSchema from "../Model/UserSchema.js"
+import bcrypt from "bcrypt"
 
 
-const SignUpUser = async(req,res) => {
+  const SignUpUser = async(req,res) => {
+  
+  // const salt = await bcrypt.genSalt()
+  const hassedPassword = await bcrypt.hash(req.body.password , 10)
 
   const {name,username,password} = req.body
 
@@ -15,7 +19,7 @@ const SignUpUser = async(req,res) => {
     const newUser = new UserSchema({
       name,
       username,
-      password
+      password: hassedPassword
     })
     await newUser.save()
 
@@ -29,4 +33,4 @@ const SignUpUser = async(req,res) => {
   }
 }
 
-export default SignUpUser;
+export default SignUpUser

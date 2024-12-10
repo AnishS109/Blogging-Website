@@ -66,7 +66,7 @@ const Register = () => {
 
   const handleSubmit = async(e) => {
     e.preventDefault()
-    console.log(state.registerDetails);
+    // console.log(state.registerDetails);
 
     if(!state.registerDetails.name || !state.registerDetails.username || !state.registerDetails.password){
       dispatcState({type:"SET_ERROR",payload:"All fields are required"})
