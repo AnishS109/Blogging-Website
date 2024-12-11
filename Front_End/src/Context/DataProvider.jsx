@@ -1,25 +1,37 @@
-import { createContext, useState } from "react"
+    import { createContext, useState, useEffect} from "react"
 
 
-export const DataContext = createContext(null)
+    export const DataContext = createContext(null)
 
-const DataProvider = ({children}) => {
+    const DataProvider = ({children}) => {
 
-    const [account, setAccount] = useState({
-        username:"",
-        name:""
-    })
+        const [account, setAccount] = useState({
+            username:"",
+            name:""
+        })
 
-    return (
-        <DataContext.Provider value={{
-           account,
-           setAccount
-        }}>
+        const [isAuthenticated, setIsAuthenticated] = useState(() => {
+            // Initialize `isAuthenticated` from localStorage
+            return localStorage.getItem("isAuthenticated") === "true";
+          });
+        
+          useEffect(() => {
+            // Sync `isAuthenticated` with localStorage
+            localStorage.setItem("isAuthenticated", isAuthenticated);
+          }, [isAuthenticated]);
 
-        {children}
+        return (
+            <DataContext.Provider value={{
+            account,
+            setAccount,
+            isAuthenticated,
+            setIsAuthenticated
+            }}>
 
-        </DataContext.Provider>
-    )
-}
+            {children}
 
-export default DataProvider;
+            </DataContext.Provider>
+        )
+    }
+
+    export default DataProvider;

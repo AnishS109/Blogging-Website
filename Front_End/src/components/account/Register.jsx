@@ -85,7 +85,7 @@ const Register = () => {
       if(response.ok){
         dispatcState({type:"SET_SUCCESS",payload:"Registered Successfully"})
         setTimeout (() => {
-          navigate("/login")
+          navigate("/")
         },2000)
       }
       const datas = await response.json()

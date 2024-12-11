@@ -1,9 +1,12 @@
 import Layout from "../../Layout/Layout";
+import Banner from "../Home_Component/Banner"
+import Categories from "../Home_Component/Categories"
 
 const Home = () => {
   return (
     <Layout>
-    <h1>HOME</h1>
+    <Banner/>
+    <Categories/>
     </Layout>
   )
 }

@@ -43,7 +43,7 @@ const Login = () => {
 
   const [state,dispatchState] = useReducer(reducer,initialState)
   const navigate = useNavigate()
-  const {setAccount} = useContext(DataContext)
+  const {setAccount, setIsAuthenticated} = useContext(DataContext)
 
   const handleChange = (e) => {
     const {name,value} = e.target
@@ -78,7 +78,8 @@ const Login = () => {
 
         setAccount({name:data.name, username:data.username})
 
-        navigate("/")
+        navigate("/home")
+        setIsAuthenticated(true)
         
         dispatchState({type:"RESET_FORM"})
         dispatchState({type:"SET_ERROR" ,payload : ""})
