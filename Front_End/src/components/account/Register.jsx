@@ -254,7 +254,7 @@ const Register = () => {
 
           <Typography sx={{color:"black"}}>
             Already have an account?
-            <NavLink to={"/login"}>
+            <NavLink to={"/"}>
               <Button>Sign in</Button>
             </NavLink>
           </Typography>
