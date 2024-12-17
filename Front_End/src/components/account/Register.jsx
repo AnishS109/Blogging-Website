@@ -86,7 +86,7 @@ const Register = () => {
         dispatcState({type:"SET_SUCCESS",payload:"Registered Successfully"})
         setTimeout (() => {
           navigate("/")
-        },2000)
+        },1000)
       }
       const datas = await response.json()
       if(datas.message == "Username already exists"){

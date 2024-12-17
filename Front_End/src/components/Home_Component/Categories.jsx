@@ -1,11 +1,29 @@
+import { NavLink } from "react-router-dom";
 import category from "../Home_Component/categories"
-import {Table, TableBody, TableCell, TableHead, TableRow} from "@mui/material"
+import {Button, Table, TableBody, TableCell, TableHead, TableRow, Typography} from "@mui/material"
 
 const Categories = () => {
   return(
     <>
 
-    <Table>
+    <NavLink to={"/create"}>
+      <Button
+        sx={{
+          m: "20px",
+          bgcolor: "black",
+          width: "85%",
+          color: "white",
+          "&:hover": {
+            bgcolor: "grey",
+          },
+        }}
+      >
+        CREATE BLOG
+      </Button>
+    </NavLink>
+
+
+    <Table className="border-2 border-stone-300">
         <TableHead>
             <TableRow>
                 <TableCell>
@@ -13,10 +31,10 @@ const Categories = () => {
                 </TableCell>
             </TableRow>
         </TableHead>
-        <TableBody>
+        <TableBody >
             {
             category.map(cate => (
-                <TableRow key={cate.id}>
+                <TableRow key={cate.id} >
                     <TableCell>
                         {cate.type}
                     </TableCell>

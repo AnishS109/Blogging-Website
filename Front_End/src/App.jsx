@@ -71,6 +71,7 @@ import { BrowserRouter, Routes, Route, Outlet, Navigate } from "react-router-dom
 import { useContext } from "react";
 import DataProvider, { DataContext } from "./Context/DataProvider";
 import { Suspense, lazy } from "react";
+import CreatePost from "./components/create/CreatePost";
 
 // Lazy-loaded components
 const Login = lazy(() => import("./components/account/Login"));
@@ -80,7 +81,7 @@ const About = lazy(() => import("./components/pages/About"));
 const Contact = lazy(() => import("./components/pages/Contact"));
 
 function App() {
-  const { isAuthenticated } = useContext(DataContext);
+  const { isAuthenticated} = useContext(DataContext);
 
   const PrivateRoute = () => {
     if (isAuthenticated) {
@@ -108,6 +109,7 @@ function App() {
               <Route path="/home" element={<Home />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
+              <Route path="/create" element={<CreatePost />} />
             </Route>
           </Routes>
         </Suspense>
