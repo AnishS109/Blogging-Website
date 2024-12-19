@@ -77,7 +77,7 @@ const Register = () => {
     dispatcState({type:"SET_ERROR",payload:""})
 
     try {
-      const response = await fetch("http://localhost:5000/sign-up",{
+      const response = await fetch("http://localhost:5000/register/user-register",{
         method: "POST",
         headers: {'Content-Type' : 'application/json'},
         body:JSON.stringify(state.registerDetails)
@@ -103,7 +103,7 @@ const Register = () => {
 
     <Box
         sx={{
-          height: "91vh",
+          height: "100vh",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
