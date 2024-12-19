@@ -1,11 +1,19 @@
 import UserSchema from "../Model/UserSchema.js"
 import TokenSchema from "../Model/TokenSchema.js"
 
+import  express  from "express"
+import cors from "cors"
+
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
-import { json } from "express"
 
-const SignInUser = async(req,res) => {
+const SignInUser  = express()
+
+SignInUser.use(cors()); // to allow cross-origin requests
+SignInUser.use(express.json()); // to parse JSON bodies
+SignInUser.use(express.urlencoded({ extended: true }));
+
+SignInUser.post("/user-login", async(req,res) => {
 
   const {username,password} = req.body
   const ACCESS_SECRET_KEY = "hsdgcugchdgsbxcjgsxhslmkhxbnsggxnkgfkjwegzlkjwghdjhxgxjkg"
@@ -40,6 +48,6 @@ const SignInUser = async(req,res) => {
     console.error("ERROR OCCURED IN LOGIN")
     res.status().json({message:"SOMETHING WENT WRONG"})
   }
-}
+}) 
 
 export default SignInUser

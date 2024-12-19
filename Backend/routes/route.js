@@ -1,15 +1,13 @@
-import  express  from "express"
-import SignUpUser from "../Controller/user-signup-controller.js"
-import cors from "cors"
-import SignInUser from "../Controller/user-sign-in-controller.js"
+import express from "express";
+import cors from "cors";
+import {UploadImage, getImage } from "../Controller/image-controller.js";
+import upload from "../utils/upload.js"; // multer middleware
 
-const router = express.Router()
+const router = express.Router();
 
-router.use(cors())
-router.use(express.json())
-router.use(express.urlencoded({extended:true}))
+router.use(cors()); 
 
-router.post("/sign-up",SignUpUser)
-router.post("/login", SignInUser)
+router.post("/file/upload", upload.single("file"), UploadImage);
+router.get("/file/:filename", getImage)
 
-export default router
+export default router;

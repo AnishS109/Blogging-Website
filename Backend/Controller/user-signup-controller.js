@@ -1,8 +1,16 @@
 import UserSchema from "../Model/UserSchema.js"
 import bcrypt from "bcrypt"
+import express from "express";
+import cors from "cors"
 
 
-  const SignUpUser = async(req,res) => {
+const SignUpUser = express()
+
+SignUpUser.use(cors()); // to allow cross-origin requests
+SignUpUser.use(express.json()); // to parse JSON bodies
+SignUpUser.use(express.urlencoded({ extended: true }));
+
+SignUpUser.post("/user-register", async(req,res) => {
   
   // const salt = await bcrypt.genSalt()
   const hassedPassword = await bcrypt.hash(req.body.password , 10)
@@ -31,6 +39,6 @@ import bcrypt from "bcrypt"
     return res.status(500).json({message:"Error while Registering"})
     
   }
-}
+}) 
 
 export default SignUpUser

@@ -1,7 +1,9 @@
 import { Box, TextField, Button, Typography, IconButton, Divider } from "@mui/material";
 import Layout from "../../Layout/Layout";
 import { AddCircle as Add } from "@mui/icons-material";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { data, useLocation } from "react-router-dom";
+import { DataContext } from "../../Context/DataProvider";
 
 const CreatePost = () => {
   const [post, setPost] = useState({
@@ -13,7 +15,14 @@ const CreatePost = () => {
     createdDate: new Date()
   });
 
+  const [DATASS, setDATASS] = useState()
+
   const [file, setFiles] = useState("")
+  const {account} = useContext(DataContext)
+  const location = useLocation()
+
+  const url = post.picture ? post.picture : "https://images.unsplash.com/photo-1543128639-4cb7e6eeef1b?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8bGFwdG9wJTIwc2V0dXB8ZW58MHx8MHx8&ixlib=rb-1.2.1&w=1000&q=80"
+
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -22,15 +31,47 @@ const CreatePost = () => {
 
   useEffect(() => {
 
-    const getImg = () => {
+    const getImg = async() => {
       if(file){
-        const data = new FormData()
-        data.append("name", file.name)
-        data.append("file", file)
+        const datas = new FormData()
+        datas.append("name", file.name)
+        datas.append("file", file)
+
+        // console.log(datas.get("file"))
+
+        try {
+
+          const response = await fetch("http://localhost:5000/file/upload", {
+            method:"POST",
+            body: datas
+          })
+
+          let data = await response.json()
+          setDATASS(data)
+          
+        } catch (error) {
+          console.error("Error in uploading Picture", error)
+        }
       }
     }
+    getImg() 
+    post.category = location.search?.split("=")[1] || "All";
+    post.username = account.username
+  },[file])
 
-  },[])
+  useEffect(() => {
+    console.log("Sending data to DATABSE:",DATASS);
+    if(DATASS){
+      const UploadImg = async() => {
+        const response = await fetch(`http://localhost:5000/file/${DATASS}`)
+        const data2 = await response.json()
+        console.log(DATASS);
+        console.log("Final DATA",data2);
+      } 
+      UploadImg()
+    }
+  },[DATASS])
+
 
   return (
     <Layout>
@@ -59,7 +100,7 @@ const CreatePost = () => {
           {/* Header Image */}
           <Box sx={{ position: "relative", width: "100%", height: "300px" }}>
             <img
-              src="https://images.unsplash.com/photo-1543128639-4cb7e6eeef1b?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8bGFwdG9wJTIwc2V0dXB8ZW58MHx8MHx8&ixlib=rb-1.2.1&w=1000&q=80"
+              src={url}
               alt="Header"
               style={{
                 width: "100%",
@@ -85,7 +126,7 @@ const CreatePost = () => {
                 <Add sx={{ fontSize: 36 }} />
               </IconButton>
             </label>
-            <input type="file" id="fileInput" style={{ display: "none" }} />
+            <input type="file" id="fileInput" style={{ display: "none" }} onChange={(e) => setFiles(e.target.files[0])}/>
           </Box>
 
           {/* Content Section */}

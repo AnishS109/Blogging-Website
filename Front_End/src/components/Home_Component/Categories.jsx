@@ -1,12 +1,15 @@
-import { NavLink } from "react-router-dom";
+import { Link, NavLink, useSearchParams } from "react-router-dom";
 import category from "../Home_Component/categories"
 import {Button, Table, TableBody, TableCell, TableHead, TableRow, Typography} from "@mui/material"
 
 const Categories = () => {
+  
+  const [searchParams] = useSearchParams();
+  const categories = searchParams.get('category');
+  
   return(
     <>
-
-    <NavLink to={"/create"}>
+    <NavLink to={`/create?category=${categories || ""}`}>
       <Button
         sx={{
           m: "20px",
@@ -27,7 +30,9 @@ const Categories = () => {
         <TableHead>
             <TableRow>
                 <TableCell>
+                  <Link to={"/home"}>
                     All Categories
+                  </Link>
                 </TableCell>
             </TableRow>
         </TableHead>
@@ -36,7 +41,9 @@ const Categories = () => {
             category.map(cate => (
                 <TableRow key={cate.id} >
                     <TableCell>
+                      <Link to={`/home?category=${cate.type}`}>
                         {cate.type}
+                      </Link>
                     </TableCell>
                 </TableRow>
             ))
